@@ -1,0 +1,29 @@
+services:
+  mongodb:
+    image: mongo:6
+    container_name: nammongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - product-net
+
+  product-api:
+    build: .
+    container_name: product-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    networks:
+      - product-net
+
+networks:
+  product-net:
+    driver: bridge
+
+volumes:
+  mongo_data:
