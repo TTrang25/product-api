@@ -77,3 +77,18 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_PRODUCTAPI }}/product-api:latest
             ${{ secrets.DOCKERHUB_PRODUCTAPI }}/product-api:${{ github.sha }}
+
+  deploy-local:
+    needs: deploy
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull latest image and redeploy
+        run: |
+          docker compose -p product-api -f docker-compose-prod.yaml pull
+          docker compose -p product-api -f docker-compose-prod.yaml up -d
+
+      - name: Show status
+        run: docker compose -p product-api -f docker-compose-prod.yaml ps
